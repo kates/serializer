@@ -110,7 +110,8 @@ module Serializer
                   io << "," if fields_count > 0
                   fields_count += 1
                   key = key_transform("{{props[:key].id}}", opts)
-                  io << "\"#{key}\":" << {{target.id}}.{{name.id}}.to_json
+                  value = {% if props[:converter] %} {{props[:converter].id}}({{target.id}}.{{name.id}}) {% else %} {{target.id}}.{{name.id}} {% end %}
+                  io << "\"#{key}\":" << value.to_json
                 end
               {% end %}
               fields_count
