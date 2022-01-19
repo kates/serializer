@@ -45,6 +45,13 @@ class Address
   end
 end
 
+class Phone
+  property number
+
+  def initialize(@number = "98765432")
+  end
+end
+
 # ===============
 # === Serializers
 # ===============
@@ -84,5 +91,13 @@ class InheritedSerializer < ModelSerializer
 
   def inherited_field
     1.23
+  end
+end
+
+class PhoneSerializer < Serializer::Base(Phone)
+  attribute :number, converter: :add_country_code
+
+  def add_country_code(value)
+    "+11#{value}"
   end
 end

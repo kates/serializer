@@ -25,7 +25,7 @@ module Serializer
     macro attributes(*names)
       {%
         names.reduce(ATTRIBUTES) do |hash, name|
-          hash[name] = {key: name, if: nil}
+          hash[name] = {key: name, if: nil, converter: nil}
           hash
         end
       %}
@@ -47,19 +47,32 @@ module Serializer
     #
     # Returned type will be used in `if` clause.
     #
+    # * *converter* - name of a method that will be passed a value for extra processing.
+    #
+    # Converter method should have the following signature:
+    #
+    # `abstract def method(value : Serializer::MetaAny)`
+    #
+    # The method must return a value
+    #
     # ```
     # class UserSerializer < Serializer::Base(User)
     #   attribute :name
     #   attribute :first_name, "first-name"
     #   attribute :email, if: :secure?
+    #   attribute :birthday, converter: :format_birthday
     #
     #   def secure?(record, options)
     #     options && options[:secure]?
     #   end
+    #
+    #   def format_birthday(value)
+    #     value.is_a?(Time) ? value.to_s("%Y-%m-%d") : value
+    #   end
     # end
     # ```
-    macro attribute(name, key = nil, if if_proc = nil)
-      {% ATTRIBUTES[name] = {key: key || name, if: if_proc} %}
+    macro attribute(name, key = nil, if if_proc = nil, converter converter_proc = nil)
+      {% ATTRIBUTES[name] = {key: key || name, if: if_proc, converter: converter_proc} %}
     end
 
     # Defines `one-to-many` *name* association that is serialized by *serializer*.

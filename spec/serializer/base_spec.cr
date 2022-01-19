@@ -107,10 +107,20 @@ describe Serializer::Base do
 
     context "dynamic root" do
       context "without default root" do
-        ModelWithoutRootSerializer.new(Model.new).serialize(opts: { :root_key => "model" }).should eq("{\"model\":{\"name\":\"test\",\"Title\":\"asd\",\"own_field\":12}}")
+        it do
+          ModelWithoutRootSerializer.new(Model.new).serialize(opts: { :root_key => "model" }).should eq("{\"model\":{\"name\":\"test\",\"Title\":\"asd\",\"own_field\":12}}")
+        end
       end
       context "with default root" do
-        ModelWithRootSerializer.new(Model.new).serialize(opts: { :root_key => "model" }).should eq("{\"model\":{\"name\":\"test\",\"Title\":\"asd\",\"own_field\":12}}")
+        it do
+          ModelWithRootSerializer.new(Model.new).serialize(opts: { :root_key => "model" }).should eq("{\"model\":{\"name\":\"test\",\"Title\":\"asd\",\"own_field\":12}}")
+        end
+      end
+    end
+
+    context "field with converter" do
+      it do
+        PhoneSerializer.new(Phone.new).serialize.should eq("{\"data\":{\"number\":\"+1198765432\"}}")
       end
     end
   end
